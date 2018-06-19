@@ -15,6 +15,16 @@ videos = yt.streams.filter(only_audio=(True if isAudio == "True" else False), su
 print(videos)
 print(videos[0].default_filename)
 videos[0].download(dir)
-print("acabou")
+
+import json
+#json_data=open("C:\\Users\\20171bsi0464\\Downloads\\ffmpeg-20180619-830695b-win32-shared\\bin\\mytext.json").read()
+
+#data = json.loads(json_data)
+#print(data['streams'][0]['duration'])
 
 #python C:\Users\Thiago\IdeaProjects\DitiDownloader\src\main\java\DitiPytube.py http://youtube.com/watch?v=mtnykPCH2Ss "C:\Users\Thiago\Desktop" True,MP4
+#import json
+#json_data=open("C:\\Users\\20171bsi0464\\Downloads\\ffmpeg-20180619-830695b-win32-shared\\bin\\mytext.json").read()
+
+# data = json.loads(json_data)
+# print(data['streams'][0]['duration'])
