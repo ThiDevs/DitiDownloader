@@ -123,7 +123,7 @@ public class Controller {
                     public void run() {
                         String link = "http://youtube.com/watch?v=" + ID.get(i);
                         //Formato.getSelectionModel());
-                        String cmd = "python C:\\Users\\Thiago\\IdeaProjects\\DitiDownloader\\src\\main\\java\\DitiPytube.py " + link + " \"" + dir + "\" True," + Formato.getSelectionModel().getSelectedItem();
+                        String cmd = "python C:\\Users\\20171bsi0464\\IdeaProjects\\DitiDownloader\\src\\main\\java\\DitiPytube.py " + link + " \"" + dir + "\" True," + Formato.getSelectionModel().getSelectedItem();
                         System.out.println(cmd);
                         try {
                             Process p = Runtime.getRuntime().exec(cmd);
@@ -150,7 +150,7 @@ public class Controller {
     @FXML
     void salvarem(ActionEvent event) {
         DirectoryChooser directoryChooser = new DirectoryChooser();
-        directoryChooser.setTitle("Select Some Directories");
+        directoryChooser.setTitle("Selecione onde quer salvar");
         directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
         dir = directoryChooser.showDialog(null).toString();
         path.setText(dir);

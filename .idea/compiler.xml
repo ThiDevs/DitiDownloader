@@ -9,5 +9,8 @@
         <module name="DitiDownloader" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="DitiDownloader" target="8" />
+    </bytecodeTargetLevel>
   </component>
 </project>

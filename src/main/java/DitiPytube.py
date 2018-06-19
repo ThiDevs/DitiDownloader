@@ -15,5 +15,6 @@ videos = yt.streams.filter(only_audio=(True if isAudio == "True" else False), su
 print(videos)
 print(videos[0].default_filename)
 videos[0].download(dir)
+print("acabou")
 
 #python C:\Users\Thiago\IdeaProjects\DitiDownloader\src\main\java\DitiPytube.py http://youtube.com/watch?v=mtnykPCH2Ss "C:\Users\Thiago\Desktop" True,MP4
