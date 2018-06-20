@@ -75,7 +75,10 @@ public class Search implements Runnable {
         while (iteratorSearchResults.hasNext()) {
 
             SearchResult singleVideo = iteratorSearchResults.next();
+            System.out.println(singleVideo);
             ResourceId rId = singleVideo.getId();
+
+
 
             // Confirm that the result represents a video. Otherwise, the
             // item will not contain a video ID.

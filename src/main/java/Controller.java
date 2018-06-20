@@ -4,7 +4,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 import com.google.gson.JsonArray;
@@ -13,13 +12,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.jfoenix.controls.*;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -134,7 +130,7 @@ public class Controller {
                         String link = "http://youtube.com/watch?v=" + ID.get(i);
                         //Formato.getSelectionModel());
                         /* Calls Python */
-                        String cmd = "python C:\\Users\\Thiago\\IdeaProjects\\DitiDownloader\\src\\main\\java\\DitiPytube.py " + link + " \"" + dir + "\" True," + Formato.getSelectionModel().getSelectedItem();
+                        String cmd = "python C:\\Users\\Administrador\\IdeaProjects\\DitiDownloader\\src\\main\\java\\DitiPytube.py " + link + " \"" + dir + "\" True," + Formato.getSelectionModel().getSelectedItem();
                         System.out.println(cmd);
                         String line = "";
                         try {
@@ -145,6 +141,7 @@ public class Controller {
                                 aux = line;
                                 line = r.readLine();
                                 if (line == null) {
+                                    System.out.println(aux);
                                     line = aux;
                                     break;
                                 }
