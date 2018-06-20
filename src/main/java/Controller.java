@@ -134,15 +134,15 @@ public class Controller {
                         String link = "http://youtube.com/watch?v=" + ID.get(i);
                         //Formato.getSelectionModel());
                         /* Calls Python */
-                        String cmd = "python C:\\Users\\thiagoalves\\DitiDownloader\\src\\main\\java\\DitiPytube.py " + link + " \"" + dir + "\" True," + Formato.getSelectionModel().getSelectedItem();
+                        String cmd = "python C:\\Users\\Thiago\\IdeaProjects\\DitiDownloader\\src\\main\\java\\DitiPytube.py " + link + " \"" + dir + "\" True," + Formato.getSelectionModel().getSelectedItem();
                         System.out.println(cmd);
                         String line = "";
                         try {
                             Process p = Runtime.getRuntime().exec(cmd);
                             BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream(),"Windows-1252"));
-
+                            String aux;
                             while (true) {
-                                String aux = line;
+                                aux = line;
                                 line = r.readLine();
                                 if (line == null) {
                                     line = aux;
@@ -154,7 +154,9 @@ public class Controller {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                     Converte(dir,i);
+                        String path = dir+"\\"+line;
+                        System.out.println(path);
+                     Converte(path,i);
 
                     }});
                 thread.start();
@@ -171,9 +173,8 @@ public class Controller {
         directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
         dir = directoryChooser.showDialog(null).toString();
         path.setText(dir);
-
-
     }
+
     void Converte(String dir, int i){
         Float Total = GetDuration(dir);
         System.out.println(Total);
@@ -193,7 +194,7 @@ public class Controller {
                     Float calc = GetDuration(dir + ".mp3");
                     Float porctagem = (calc)/Total;
                     if (i != -1) {
-                        titles2.get(i).setProgress(porctagem);
+                        Platform.runLater(() -> titles2.get(i).setProgress(porctagem));
                     }
                     System.out.println(porctagem);
 
@@ -223,7 +224,7 @@ public class Controller {
     private Float GetDuration(String path){
         /* Calls FFPROBE */
         String FFPROBE = "ffprobe -i \""+path+"\" -v quiet -print_format json -show_format -show_streams -hide_banner";
-       // System.out.println(FFPROBE);
+        System.out.println(FFPROBE);
         String aux = "";
         try {
             Process p = Runtime.getRuntime().exec(FFPROBE);
