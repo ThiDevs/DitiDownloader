@@ -53,7 +53,7 @@ public class MyUploads {
 
         // Load client secrets.
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(
-                JSON_FACTORY, new StringReader("client.json"));
+                JSON_FACTORY, new StringReader("C:\\Users\\Thiago\\IdeaProjects\\DitiDownloader\\src\\main\\resources\\client.json"));
 
         // Checks that the defaults have been replaced (Default = "Enter X here").
         if (clientSecrets.getDetails().getClientId().startsWith("Enter")
