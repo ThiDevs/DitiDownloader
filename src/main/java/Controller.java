@@ -88,7 +88,7 @@ public class Controller {
                     String link = Pesquisar.getText();//"http://youtube.com/watch?v=" + ID.get(i);
                     //Formato.getSelectionModel());
                     /* Calls Python */
-                    String cmd = "python C:\\Users\\Thiago\\IdeaProjects\\DitiDownloader\\src\\main\\java\\YoutubeLink.py " + link;
+                    String cmd = "python C:\\Users\\thiagoalves\\DitiDownloader\\src\\main\\java\\YoutubeLink.py " + link;
                     System.out.println(cmd);
                     String line = "";
                     try {
@@ -116,9 +116,11 @@ public class Controller {
                                 titles.add(new Label(titulo.replaceAll("\"", "")));
                                 titles.get(i).setStyle("-fx-text-fill:  #d4d6cd;");
                                 Grid.add(titles.get(i), 2, i);
+
+                                thumbs.get(i).setOnMouseClicked(action(i));
+                                titles.get(i).setOnMouseClicked(action(i));
                                 i++;
                             } catch (Exception e) {
-    e.printStackTrace();
                             }
 
                         }
@@ -133,6 +135,45 @@ public class Controller {
         } else {
             search(Pesquisar.getText());
         }
+
+    }
+    void DownloadVideo(String IdVideo,int i){
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String link = "http://youtube.com/watch?v=" + IdVideo;
+                //Formato.getSelectionModel());
+                /* Calls Python */
+                String cmd = "python C:\\Users\\thiagoalves\\DitiDownloader\\src\\main\\java\\DitiPytube.py " + link + " \"" + dir + "\" True," + Formato.getSelectionModel().getSelectedItem();
+                System.out.println(cmd);
+                String line = "";
+                try {
+                    Process p = Runtime.getRuntime().exec(cmd);
+                    BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream(), "Windows-1252"));
+                    String aux;
+                    while (true) {
+                        aux = line;
+                        line = r.readLine();
+                        if (line == null) {
+                            line = aux;
+                            break;
+                        }
+                        System.out.println(line);
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                String path = dir + "\\" + line;
+                System.out.println(path);
+                Converte(path, i);
+
+            }
+        });
+        thread.start();
+
+
 
     }
 
@@ -216,40 +257,9 @@ public class Controller {
 
             @Override
             public void handle(MouseEvent event) {
-
-                Thread thread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        String link = "http://youtube.com/watch?v=" + ID.get(i);
-                        //Formato.getSelectionModel());
-                        /* Calls Python */
-                        String cmd = "python C:\\Users\\Thiago\\IdeaProjects\\DitiDownloader\\src\\main\\java\\DitiPytube.py " + link + " \"" + dir + "\" True," + Formato.getSelectionModel().getSelectedItem();
-                        System.out.println(cmd);
-                        String line = "";
-                        try {
-                            Process p = Runtime.getRuntime().exec(cmd);
-                            BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream(), "Windows-1252"));
-                            String aux;
-                            while (true) {
-                                aux = line;
-                                line = r.readLine();
-                                if (line == null) {
-                                    line = aux;
-                                    break;
-                                }
-                                System.out.println(line);
-
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        String path = dir + "\\" + line;
-                        System.out.println(path);
-                        Converte(path, i);
-
-                    }
-                });
-                thread.start();
+                System.out.println(ID.get(i));
+                DownloadVideo(ID.get(i),i);
+            //https://www.youtube.com/playlist?list=PLQuDmj3ez49wUERdKxZYfoDVESQuvppH2
             }
         };
 
@@ -373,6 +383,10 @@ public class Controller {
             String thumb = element2.getAsJsonObject().get("thumbnails").getAsJsonObject().get("default").getAsJsonObject().get("url").toString().replaceAll("\"","");
             System.out.println(thumb);
             info.add(thumb);
+
+            String id = element.getAsJsonObject().get("id").toString().replaceAll("\"","");
+            System.out.println(id);
+            ID.add(id);
             //Principal.getChildren().add(listView);
         } catch (Exception e) {
             e.printStackTrace();
