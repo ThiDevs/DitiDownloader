@@ -60,7 +60,9 @@ public class Search implements Runnable {
 	}
 
     private void prettyPrint(Iterator<SearchResult> iteratorSearchResults, String query) {
-
+        try{id.clear();}catch (Exception e){}
+        try{titles.clear();}catch (Exception e){}
+        try{thumb.clear();}catch (Exception e){}
         System.out.println("\n=============================================================");
         System.out.println(
                 "   First " + NUMBER_OF_VIDEOS_RETURNED + " videos for search on \"" + query + "\".");

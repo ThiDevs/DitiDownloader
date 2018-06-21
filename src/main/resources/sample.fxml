@@ -11,9 +11,9 @@
 <?import javafx.scene.paint.RadialGradient?>
 <?import javafx.scene.paint.Stop?>
 
-<AnchorPane fx:id="Principal" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="627.0" prefWidth="372.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
+<AnchorPane fx:id="Principal" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="627.0" prefWidth="372.0" styleClass="AnchorPane" stylesheets="@application.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
    <children>
-      <JFXTextField fx:id="Pesquisar" layoutX="6.0" layoutY="33.0" prefHeight="25.0" prefWidth="268.0" promptText="Pesquisar">
+      <JFXTextField fx:id="Pesquisar" layoutX="6.0" layoutY="33.0" prefHeight="25.0" prefWidth="268.0" promptText="Pesquisar" style="-fx-text-fill: #d4d6cd;">
          <focusColor>
             <RadialGradient centerX="0.5111111111111111" centerY="0.5" radius="0.5">
                <stops>
@@ -23,13 +23,21 @@
                </stops>
             </RadialGradient>
          </focusColor>
+         <unFocusColor>
+            <RadialGradient centerX="0.46111111111111114" centerY="0.4666666666666667" radius="0.5">
+               <stops>
+                  <Stop color="RED" />
+                  <Stop color="BLACK" offset="1.0" />
+               </stops>
+            </RadialGradient>
+         </unFocusColor>
       </JFXTextField>
       <JFXButton layoutX="280.0" layoutY="33.0" onAction="#Ok" prefHeight="25.0" prefWidth="79.0" text="OK" />
-      <ScrollPane layoutX="7.0" layoutY="121.0" pannable="true" prefHeight="505.0" prefWidth="361.0">
+      <ScrollPane fx:id="ScrollPane" layoutX="7.0" layoutY="121.0" pannable="true" prefHeight="505.0" prefWidth="361.0" styleClass="ScrollPane">
         <content>
-          <AnchorPane fx:id="scroll" minHeight="0.0" minWidth="0.0" prefHeight="703.0" prefWidth="345.0">
+          <AnchorPane fx:id="scroll" minHeight="0.0" minWidth="0.0" prefHeight="703.0" prefWidth="345.0" styleClass="AnchorPane">
                <children>
-                  <GridPane fx:id="listView" layoutX="-18.0" layoutY="-2.0" prefHeight="390.0" prefWidth="361.0">
+                  <GridPane fx:id="listView" layoutX="-18.0" layoutY="-2.0" prefHeight="390.0" prefWidth="361.0" styleClass="list-view">
                     <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -45,8 +53,40 @@
             </AnchorPane>
         </content>
       </ScrollPane>
-      <JFXComboBox fx:id="Formato" layoutX="14.0" layoutY="77.0" />
-      <JFXTextField fx:id="path" layoutX="151.0" layoutY="78.0" />
+      <JFXComboBox fx:id="Formato" layoutX="14.0" layoutY="77.0">
+         <focusColor>
+            <RadialGradient centerX="0.46111111111111114" centerY="0.4666666666666667" radius="0.5">
+               <stops>
+                  <Stop color="RED" />
+                  <Stop color="BLACK" offset="1.0" />
+               </stops>
+            </RadialGradient>
+         </focusColor>
+         <unFocusColor>
+            <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+               <stops>
+                  <Stop color="RED" />
+                  <Stop color="BLACK" offset="1.0" />
+               </stops>
+            </RadialGradient>
+         </unFocusColor></JFXComboBox>
+      <JFXTextField fx:id="path" layoutX="151.0" layoutY="78.0">
+         <focusColor>
+            <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+               <stops>
+                  <Stop color="RED" />
+                  <Stop color="BLACK" offset="1.0" />
+               </stops>
+            </RadialGradient>
+         </focusColor>
+         <unFocusColor>
+            <RadialGradient centerX="0.46111111111111114" centerY="0.4666666666666667" radius="0.5">
+               <stops>
+                  <Stop color="RED" />
+                  <Stop color="BLACK" offset="1.0" />
+               </stops>
+            </RadialGradient>
+         </unFocusColor></JFXTextField>
       <JFXButton layoutX="286.0" layoutY="87.0" onAction="#salvarem" text="Salvar em" />
       <JFXButton layoutX="291.0" layoutY="65.0" onAction="#getmusic" text="Get Music" />
    </children>

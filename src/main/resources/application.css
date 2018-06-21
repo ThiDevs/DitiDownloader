@@ -1,0 +1,24 @@
+.text-field {
+    -fx-text-fill:  #d4d6cd;
+    -fx-prompt-text-fill: gray;
+}
+.AnchorPane {
+    -fx-background-color:  #20211d;
+}
+.ScrollPane {
+    -fx-background-color:  #20211d;
+}
+.ScrollPane > .corner {
+    -fx-background-color: black;
+}
+.ScrollPane > .viewport {
+   -fx-background-color: transparent;
+}
+. list-view{
+    -fx-background-color:  #20211d;
+    -fx-text-fill:  #d4d6cd;
+}
+. jfxlabel{
+    -fx-background-color:  #20211d;
+    -fx-text-fill:  #d4d6cd;
+}

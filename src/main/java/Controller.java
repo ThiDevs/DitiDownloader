@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
@@ -24,6 +25,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import org.mortbay.util.ajax.JSONObjectConvertor;
@@ -33,6 +35,8 @@ public class Controller {
     Thread t1;
     Search Pesquisa;
     List<String> ID = new ArrayList<>();
+    List<Label> titles = new ArrayList<>();
+    List<ImageView> thumbs = new ArrayList<>();
     String dir;
     List<JFXSpinner> titles2 = new ArrayList<>();
     // GLOBAIS //
@@ -55,6 +59,9 @@ public class Controller {
     private AnchorPane scroll;
 
     @FXML
+    private ScrollPane ScrollPane;
+
+    @FXML
     private JFXTextField path;
 
     @FXML
@@ -62,30 +69,33 @@ public class Controller {
 
     @FXML
     void Ok(ActionEvent event) throws InterruptedException {
-        //search(Pesquisar.getText());
+        //
+        String TextoSeparado = "";
+        try {
+            TextoSeparado = Pesquisar.getText().substring(0, 38);
+        } catch (Exception e) {
+        }
 
-        try{
-
-        if (Pesquisar.getText().substring(0,38).equals("https://www.youtube.com/playlist?list=")){
+        if (TextoSeparado.equals("https://www.youtube.com/playlist?list=")) {
 
             List<Label> titles = new ArrayList<>();
-
 
 
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    ClearALL();
                     String link = Pesquisar.getText();//"http://youtube.com/watch?v=" + ID.get(i);
                     //Formato.getSelectionModel());
                     /* Calls Python */
-                    String cmd = "python C:\\Users\\Thiago\\IdeaProjects\\DitiDownloader\\src\\main\\java\\YoutubeLink.py " + link ;
+                    String cmd = "python C:\\Users\\Thiago\\IdeaProjects\\DitiDownloader\\src\\main\\java\\YoutubeLink.py " + link;
                     System.out.println(cmd);
                     String line = "";
                     try {
                         Process p = Runtime.getRuntime().exec(cmd);
                         BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream(), "Windows-1252"));
                         String aux;
-                        int i = 0 ;
+                        int i = 0;
                         while (true) {
                             aux = line;
                             line = r.readLine();
@@ -93,13 +103,21 @@ public class Controller {
                                 line = aux;
                                 break;
                             }
-                           //
+                            //
                             try {
-                                String titulo = GetTitle(line.substring(31));
-                                titles.add(new Label(titulo));
+                                String titulo = GetTitle(line.substring(31)).get(0);
+                                String thumb = GetTitle(line.substring(31)).get(1);
+
+                                thumbs.add(new ImageView(new Image(thumb)));
+                                thumbs.get(i).setFitHeight(100);
+                                thumbs.get(i).setFitWidth(100);
+                                Grid.add(thumbs.get(i), 0, i);
+
+                                titles.add(new Label(titulo.replaceAll("\"", "")));
+                                titles.get(i).setStyle("-fx-text-fill:  #d4d6cd;");
                                 Grid.add(titles.get(i), 2, i);
                                 i++;
-                            }catch (Exception e){
+                            } catch (Exception e) {
 
                             }
 
@@ -112,14 +130,9 @@ public class Controller {
                 }
             });
             thread.start();
-
-
-
+        } else {
+            search(Pesquisar.getText());
         }
-        } catch (Exception e ){}
-
-
-
 
     }
 
@@ -133,19 +146,16 @@ public class Controller {
             public void run() {
                 try {
                     t1.join();
-                    //Platform.runLater(() -> scroll.getChildren().remove(Grid));
+                    ClearALL();
 
                     for (String title : Pesquisa.getID()) {
                         ID.add(title);
                     }
 
-
-                    List<Label> titles = new ArrayList<>();
                     for (String title : Pesquisa.getLista()) {
                         titles.add(new Label(title));
                     }
 
-                    List<ImageView> thumbs = new ArrayList<>();
 
                     for (String url : Pesquisa.getThumb()) {
                         thumbs.add(new ImageView(new Image(url)));
@@ -175,6 +185,28 @@ public class Controller {
             }
         });
         t.start();
+    }
+
+    void ClearALL() {
+        Platform.runLater(() -> scroll.getChildren().clear());
+        Platform.runLater(() -> Grid.getChildren().clear());
+
+        try {
+            ID.clear();
+        } catch (Exception e) {
+        }
+        try {
+            titles2.clear();
+        } catch (Exception e) {
+        }
+        try {
+            titles.clear();
+        } catch (Exception e) {
+        }
+        try {
+            thumbs.clear();
+        } catch (Exception e) {
+        }
     }
 
     // Set action on ImageView after search Video of Youtube
@@ -264,8 +296,6 @@ public class Controller {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
 
     @FXML
@@ -305,11 +335,8 @@ public class Controller {
         JsonElement element = string.get(0);
         String durationString = element.getAsJsonObject().get("duration").toString();
         float duration = Float.parseFloat(durationString.replaceAll("\"", ""));
-        //JsonArray string2 = string.getAsJsonArray("duration");
 
-        //System.out.println(duration);
         return duration;
-
     }
 
 
@@ -318,23 +345,13 @@ public class Controller {
         Formato.getItems().add("MP4");
         Formato.getItems().add("MP3");
 
-
-
-        //String YOUR_VIDEO_ID = "rn_YodiJO6k";
-
-
-        //String titulo = GetTitle(YOUR_VIDEO_ID);
-
-        //System.out.println(titulo);
-        System.out.println();
-
     }
     //url = https://www.googleapis.com/youtube/v3/playlists?part=id&channelId=UC8ughefz4kcazXZBKBEhZww&key=AIzaSyDGRbEc7qbGJ59Vsv68fL0aHml1FYpX_1g get playlist of user
 
-    String GetTitle(String VideoID) {
+    List<String> GetTitle(String VideoID) {
 
         String ur2l = "https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet&id=" + VideoID + "&key=AIzaSyDGRbEc7qbGJ59Vsv68fL0aHml1FYpX_1g";
-        String titulo = "";
+        List<String> info = new ArrayList<>();
         try {
             URL url = new URL(ur2l);
             URLConnection request = url.openConnection();
@@ -345,17 +362,23 @@ public class Controller {
             JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent())); //Convert the input stream to a json element
             JsonObject rootobj = root.getAsJsonObject();
             JsonArray string = rootobj.getAsJsonArray("items");//May be an array, may be an object.
-            //System.out.println(string);
+           // System.out.println(string);
             JsonElement element = string.get(0);
             JsonElement element2 = element.getAsJsonObject().get("snippet");
-            titulo = element2.getAsJsonObject().get("title").toString();
+            String titulo = element2.getAsJsonObject().get("title").toString();
             System.out.println(titulo);
+            info.add(titulo);
+
+
+            String thumb = element2.getAsJsonObject().get("thumbnails").getAsJsonObject().get("default").getAsJsonObject().get("url").toString().replaceAll("\"","");
+            System.out.println(thumb);
+            info.add(thumb);
             //Principal.getChildren().add(listView);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return titulo;
+        return info;
     }
 }
 
