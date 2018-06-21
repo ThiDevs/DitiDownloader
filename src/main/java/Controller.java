@@ -118,7 +118,7 @@ public class Controller {
                                 Grid.add(titles.get(i), 2, i);
                                 i++;
                             } catch (Exception e) {
-
+    e.printStackTrace();
                             }
 
                         }
