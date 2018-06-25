@@ -1,7 +1,5 @@
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.lang.reflect.Array;
 import java.net.URL;
 import java.net.URLConnection;
@@ -12,9 +10,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.jfoenix.controls.*;
+import com.mpatric.mp3agic.Mp3File;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -29,6 +29,8 @@ import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import org.mortbay.util.ajax.JSONObjectConvertor;
+
+import javax.imageio.ImageIO;
 
 public class Controller {
     // GLOBAIS //
@@ -70,13 +72,16 @@ public class Controller {
     @FXML
     void Ok(ActionEvent event) throws InterruptedException {
         //
+        System.out.println("oi");
         String TextoSeparado = "";
         try {
             TextoSeparado = Pesquisar.getText().substring(0, 38);
         } catch (Exception e) {
         }
-
+        System.out.println(TextoSeparado);
         if (TextoSeparado.equals("https://www.youtube.com/playlist?list=")) {
+
+
 
             List<Label> titles = new ArrayList<>();
 
@@ -88,7 +93,7 @@ public class Controller {
                     String link = Pesquisar.getText();//"http://youtube.com/watch?v=" + ID.get(i);
                     //Formato.getSelectionModel());
                     /* Calls Python */
-                    String cmd = "python C:\\Users\\thiagoalves\\DitiDownloader\\src\\main\\java\\YoutubeLink.py " + link;
+                    String cmd = "python C:\\Users\\Thiago\\IdeaProjects\\DitiDownloader\\src\\main\\java\\YoutubeLink.py " + link;
                     System.out.println(cmd);
                     String line = "";
                     try {
@@ -145,7 +150,7 @@ public class Controller {
                 String link = "http://youtube.com/watch?v=" + IdVideo;
                 //Formato.getSelectionModel());
                 /* Calls Python */
-                String cmd = "python C:\\Users\\thiagoalves\\DitiDownloader\\src\\main\\java\\DitiPytube.py " + link + " \"" + dir + "\" True," + Formato.getSelectionModel().getSelectedItem();
+                String cmd = "python C:\\Users\\Thiago\\IdeaProjects\\DitiDownloader\\src\\main\\java\\DitiPytube.py " + link + " \"" + dir + "\" True," + Formato.getSelectionModel().getSelectedItem();
                 System.out.println(cmd);
                 String line = "";
                 try {
@@ -259,7 +264,7 @@ public class Controller {
             public void handle(MouseEvent event) {
                 System.out.println(ID.get(i));
                 DownloadVideo(ID.get(i),i);
-            //https://www.youtube.com/playlist?list=PLQuDmj3ez49wUERdKxZYfoDVESQuvppH2
+                //https://www.youtube.com/playlist?list=PLQuDmj3ez49wUERdKxZYfoDVESQuvppH2
             }
         };
 
@@ -306,6 +311,21 @@ public class Controller {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        try {
+            Mp3File mp3file = new Mp3File(dir + ".mp3");
+            System.out.println("Has ID3v2 tag?: " + (mp3file.hasId3v2Tag() ? "YES" : "NO"));
+            BufferedImage bImage = SwingFXUtils.fromFXImage(thumbs.get(i).getImage(), null);
+            ByteArrayOutputStream s = new ByteArrayOutputStream();
+            ImageIO.write(bImage, "png", s);
+            byte[] res  = s.toByteArray();
+            s.close();
+            mp3file.getId3v2Tag().setAlbumImage(res,"a");
+            //System.out.println("Has ID3v2 tag?: " + ());
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+
     }
 
     @FXML
@@ -349,6 +369,17 @@ public class Controller {
         return duration;
     }
 
+    @FXML
+    void DownloadAll() {
+        System.out.println("***");
+        int i = 0;
+        for (String id : ID){
+            System.out.println(id);
+            DownloadVideo(id,i);
+            i++;
+        }
+
+    }
 
     @FXML
     void initialize() {
@@ -372,7 +403,7 @@ public class Controller {
             JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent())); //Convert the input stream to a json element
             JsonObject rootobj = root.getAsJsonObject();
             JsonArray string = rootobj.getAsJsonArray("items");//May be an array, may be an object.
-           // System.out.println(string);
+            // System.out.println(string);
             JsonElement element = string.get(0);
             JsonElement element2 = element.getAsJsonObject().get("snippet");
             String titulo = element2.getAsJsonObject().get("title").toString();
@@ -395,7 +426,3 @@ public class Controller {
         return info;
     }
 }
-
-
-
-

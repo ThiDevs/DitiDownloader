@@ -2,7 +2,6 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXComboBox?>
-<?import com.jfoenix.controls.JFXSpinner?>
 <?import com.jfoenix.controls.JFXTextField?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -12,7 +11,7 @@
 <?import javafx.scene.paint.RadialGradient?>
 <?import javafx.scene.paint.Stop?>
 
-<AnchorPane fx:id="Principal" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="627.0" prefWidth="372.0" styleClass="AnchorPane" stylesheets="@application.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
+<AnchorPane fx:id="Principal" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="627.0" prefWidth="456.0" styleClass="AnchorPane" stylesheets="@application.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
    <children>
       <JFXTextField fx:id="Pesquisar" layoutX="6.0" layoutY="33.0" prefHeight="25.0" prefWidth="268.0" promptText="Pesquisar" style="-fx-text-fill: #d4d6cd;">
          <focusColor>
@@ -34,11 +33,11 @@
          </unFocusColor>
       </JFXTextField>
       <JFXButton layoutX="280.0" layoutY="33.0" onAction="#Ok" prefHeight="25.0" prefWidth="79.0" text="OK" />
-      <ScrollPane fx:id="ScrollPane" layoutX="7.0" layoutY="121.0" pannable="true" prefHeight="505.0" prefWidth="361.0" styleClass="ScrollPane">
+      <ScrollPane fx:id="ScrollPane" layoutX="7.0" layoutY="121.0" pannable="true" prefHeight="505.0" prefWidth="481.0" styleClass="ScrollPane">
         <content>
           <AnchorPane fx:id="scroll" minHeight="0.0" minWidth="0.0" prefHeight="703.0" prefWidth="345.0" styleClass="AnchorPane">
                <children>
-                  <GridPane fx:id="listView" layoutX="-18.0" layoutY="-2.0" prefHeight="390.0" prefWidth="361.0" styleClass="list-view">
+                  <GridPane fx:id="listView" layoutX="-18.0" layoutY="-2.0" prefHeight="390.0" prefWidth="479.0" styleClass="list-view">
                     <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -50,7 +49,6 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                   </GridPane>
-                  <JFXSpinner layoutX="72.0" layoutY="427.0" progress="0.18" />
                </children>
             </AnchorPane>
         </content>
@@ -90,6 +88,7 @@
             </RadialGradient>
          </unFocusColor></JFXTextField>
       <JFXButton layoutX="286.0" layoutY="87.0" onAction="#salvarem" text="Salvar em" />
-      <JFXButton layoutX="291.0" layoutY="65.0" onAction="#getmusic" text="Get Music" />
+      <JFXButton layoutX="368.0" layoutY="33.0" onAction="#getmusic" text="Get Music" />
+      <JFXButton layoutX="369.0" layoutY="87.0" onAction="#DownloadAll" text="Salvar em" />
    </children>
 </AnchorPane>
