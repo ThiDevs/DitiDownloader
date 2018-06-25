@@ -34,6 +34,11 @@ import javax.imageio.ImageIO;
 
 public class Controller {
     // GLOBAIS //
+
+    /* PUSH PATH OF SCRIPTS */
+    String Path_YoutubeLinks = "C:\\Users\\Thiago\\IdeaProjects\\DitiDownloader\\src\\main\\java\\YoutubeLink.py";
+    String DitiPytube = "C:\\Users\\Thiago\\IdeaProjects\\DitiDownloader\\src\\main\\java\\DitiPytube.py";
+
     Thread t1;
     Search Pesquisa;
     List<String> ID = new ArrayList<>();
@@ -93,7 +98,7 @@ public class Controller {
                     String link = Pesquisar.getText();//"http://youtube.com/watch?v=" + ID.get(i);
                     //Formato.getSelectionModel());
                     /* Calls Python */
-                    String cmd = "python C:\\Users\\Thiago\\IdeaProjects\\DitiDownloader\\src\\main\\java\\YoutubeLink.py " + link;
+                    String cmd = "python "+Path_YoutubeLinks+" " + link;
                     System.out.println(cmd);
                     String line = "";
                     try {
@@ -150,7 +155,7 @@ public class Controller {
                 String link = "http://youtube.com/watch?v=" + IdVideo;
                 //Formato.getSelectionModel());
                 /* Calls Python */
-                String cmd = "python C:\\Users\\Thiago\\IdeaProjects\\DitiDownloader\\src\\main\\java\\DitiPytube.py " + link + " \"" + dir + "\" True," + Formato.getSelectionModel().getSelectedItem();
+                String cmd = "python "+DitiPytube+" " + link + " \"" + dir + "\" True," + Formato.getSelectionModel().getSelectedItem();
                 System.out.println(cmd);
                 String line = "";
                 try {
