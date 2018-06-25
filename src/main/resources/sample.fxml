@@ -89,6 +89,6 @@
          </unFocusColor></JFXTextField>
       <JFXButton layoutX="286.0" layoutY="87.0" onAction="#salvarem" text="Salvar em" />
       <JFXButton layoutX="368.0" layoutY="33.0" onAction="#getmusic" text="Get Music" />
-      <JFXButton layoutX="369.0" layoutY="87.0" onAction="#DownloadAll" text="Salvar em" />
+      <JFXButton layoutX="369.0" layoutY="87.0" onAction="#DownloadAll" text="Download All" />
    </children>
 </AnchorPane>
