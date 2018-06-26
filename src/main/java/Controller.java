@@ -391,7 +391,27 @@ public class Controller {
         Formato.getItems().add("MP4");
         Formato.getItems().add("MP3");
 
-    }
+        String url2 = "https://lanchonetejson.000webhostapp.com/abc.json";
+
+        try {
+            URL url = new URL(url2);
+            URLConnection request = url.openConnection();
+            request.connect();
+
+            // Convert to a JSON object to print data
+            JsonParser jp = new JsonParser(); //from gson
+            JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent())); //Convert the input stream to a json element
+            System.out.println(root.getAsJsonObject().get("name"));
+
+
+
+        } catch (Exception e ){
+
+        }
+
+
+
+        }
     //url = https://www.googleapis.com/youtube/v3/playlists?part=id&channelId=UC8ughefz4kcazXZBKBEhZww&key=AIzaSyDGRbEc7qbGJ59Vsv68fL0aHml1FYpX_1g get playlist of user
 
     List<String> GetTitle(String VideoID) {
