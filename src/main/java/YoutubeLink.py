@@ -44,7 +44,7 @@ def crawl(url):
             f.write(finalUrls[ii] + '\n')
             az += 1
         f.close()
-        print(az)
+        #print(az)
         exit(0)
 		
     else:

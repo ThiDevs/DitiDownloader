@@ -45,8 +45,8 @@ public class Controller {
     // GLOBAIS //
 
     /* PUSH PATH OF SCRIPTS */
-    String Path_YoutubeLinks = "C:\\Users\\Thiago\\IdeaProjects\\DitiDownloader\\src\\main\\java\\YoutubeLink.py";
-    String DitiPytube = "C:\\Users\\Thiago\\IdeaProjects\\DitiDownloader\\src\\main\\java\\DitiPytube.py";
+    String Path_YoutubeLinks = "C:\\Users\\Administrador\\IdeaProjects\\DitiDownloader\\src\\main\\java\\YoutubeLink.py";
+    String DitiPytube = "C:\\Users\\Administrador\\IdeaProjects\\DitiDownloader\\src\\main\\java\\DitiPytube.py";
 
     Thread t1;
     Search Pesquisa;
@@ -113,38 +113,46 @@ public class Controller {
                         BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream(), "Windows-1252"));
                         String aux;
                         int i = 0;
+                        ID.clear();
                         while (true) {
                             aux = line;
+                            System.out.println(aux);
                             line = r.readLine();
                             if (line == null) {
                                 line = aux;
                                 break;
                             }
-                            //
-                            try {
-                                String titulo = GetTitle(line.substring(31)).get(0);
-                                String thumb = GetTitle(line.substring(31)).get(1);
 
-                                thumbs.add(new ImageView(new Image(thumb)));
-                                thumbs.get(i).setFitHeight(100);
-                                thumbs.get(i).setFitWidth(100);
-                                Grid.add(thumbs.get(i), 0, i);
+                            if(!aux.equals(line)) {
+                                try {
+                                    List<String> INFOS = GetTitle(line.substring(31));
+                                    String titulo = INFOS.get(0);
+                                    String thumb = INFOS.get(1);
 
-                                titles.add(new Label(titulo.replaceAll("\"", "")));
-                                titles.get(i).setStyle("-fx-text-fill:  #d4d6cd;");
-                                Grid.add(titles.get(i), 2, i);
+                                    thumbs.add(new ImageView(new Image(thumb)));
+                                    thumbs.get(i).setFitHeight(100);
+                                    thumbs.get(i).setFitWidth(100);
+                                    Grid.add(thumbs.get(i), 0, i);
 
-                                thumbs.get(i).setOnMouseClicked(action(i));
-                                titles.get(i).setOnMouseClicked(action(i));
+                                    titles.add(new Label(titulo.replaceAll("\"", "")));
+                                    titles.get(i).setStyle("-fx-text-fill:  #d4d6cd;");
+                                    Grid.add(titles.get(i), 2, i);
 
-                                titles2.add(new JFXSpinner());
-                                titles2.get(i).setVisible(false);
-                                Grid.add(titles2.get(i), 1, i);
+                                    thumbs.get(i).setOnMouseClicked(action(i));
+                                    titles.get(i).setOnMouseClicked(action(i));
 
-                                i++;
-                            } catch (Exception e) {
+                                    titles2.add(new JFXSpinner());
+                                    titles2.get(i).setVisible(false);
+                                    Grid.add(titles2.get(i), 1, i);
+
+
+                                } catch (Exception e) {
+                                }
                             }
 
+                            //
+
+                            i++;
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -178,6 +186,7 @@ public class Controller {
                     while (true) {
                         aux = line;
                         line = r.readLine();
+
                         if (line == null) {
                             line = aux;
                             break;
@@ -305,7 +314,8 @@ public class Controller {
 
             @Override
             public void handle(MouseEvent event) {
-                System.out.println(ID.get(i));
+
+                System.out.println(i+" "+ID.get(i));
                 DownloadVideo(ID.get(i),i);
                 //https://www.youtube.com/playlist?list=PLQuDmj3ez49wUERdKxZYfoDVESQuvppH2
             }
@@ -324,7 +334,11 @@ public class Controller {
     }
 
     void Converte(String dir, int i) {
-        Float Total = GetDuration(dir);
+        Float Total = null;
+        try{        Total = GetDuration(dir);}
+        catch (Exception e){
+            titles2.get(i).setVisible(false);
+        }
         System.out.println(Total);
         try {
             String cmd = "ffmpeg  -i " + dir + " -progress - -y " + dir + ".mp3";
@@ -420,7 +434,7 @@ public class Controller {
             newTag.setField(FieldKey.ALBUM, album);
 
             String temp = System.getProperty("java.io.tmpdir");
-            BufferedImage bImage = SwingFXUtils.fromFXImage(thumbs.get(0).getImage(), null);
+            BufferedImage bImage = SwingFXUtils.fromFXImage(thumbs.get(i).getImage(), null);
             try {
                 ImageIO.write(bImage, "png",new File(temp+"\\image.png"));
             } catch (IOException e) {
@@ -433,6 +447,7 @@ public class Controller {
             newTag.setField(artwork);
             audioFile.commit();
         } catch (Exception e){
+            titles2.get(i).setVisible(false);
             e.printStackTrace();
         }
 
@@ -452,9 +467,6 @@ public class Controller {
     void initialize() {
         Formato.getItems().add("MP4");
         Formato.getItems().add("MP3");
-
-
-
 
         }
     //url = https://www.googleapis.com/youtube/v3/playlists?part=id&channelId=UC8ughefz4kcazXZBKBEhZww&key=AIzaSyDGRbEc7qbGJ59Vsv68fL0aHml1FYpX_1g get playlist of user
@@ -477,16 +489,16 @@ public class Controller {
             JsonElement element = string.get(0);
             JsonElement element2 = element.getAsJsonObject().get("snippet");
             String titulo = element2.getAsJsonObject().get("title").toString();
-            System.out.println(titulo);
+//            System.out.println(titulo);
             info.add(titulo);
 
 
             String thumb = element2.getAsJsonObject().get("thumbnails").getAsJsonObject().get("default").getAsJsonObject().get("url").toString().replaceAll("\"","");
-            System.out.println(thumb);
+            //System.out.println(thumb);
             info.add(thumb);
 
             String id = element.getAsJsonObject().get("id").toString().replaceAll("\"","");
-            System.out.println(id);
+            System.out.println(element.getAsJsonObject());
             ID.add(id);
             //Principal.getChildren().add(listView);
         } catch (Exception e) {
