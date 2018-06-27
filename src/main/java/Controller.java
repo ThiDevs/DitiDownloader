@@ -1,20 +1,22 @@
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.awt.image.WritableRaster;
+import java.io.*;
 import java.lang.reflect.Array;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
 import java.util.*;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.jfoenix.controls.*;
+import com.mpatric.mp3agic.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -28,10 +30,24 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.audio.flac.metadatablock.MetadataBlockData;
+import org.jaudiotagger.tag.FieldKey;
+import org.jaudiotagger.tag.Tag;
+import org.jaudiotagger.tag.datatype.Artwork;
+import org.jaudiotagger.tag.id3.ID3v23Tag;
 import org.mortbay.util.ajax.JSONObjectConvertor;
+
+import javax.imageio.ImageIO;
 
 public class Controller {
     // GLOBAIS //
+
+    /* PUSH PATH OF SCRIPTS */
+    String Path_YoutubeLinks = "C:\\Users\\Thiago\\IdeaProjects\\DitiDownloader\\src\\main\\java\\YoutubeLink.py";
+    String DitiPytube = "C:\\Users\\Thiago\\IdeaProjects\\DitiDownloader\\src\\main\\java\\DitiPytube.py";
+
     Thread t1;
     Search Pesquisa;
     List<String> ID = new ArrayList<>();
@@ -70,12 +86,13 @@ public class Controller {
     @FXML
     void Ok(ActionEvent event) throws InterruptedException {
         //
+        System.out.println("oi");
         String TextoSeparado = "";
         try {
             TextoSeparado = Pesquisar.getText().substring(0, 38);
         } catch (Exception e) {
         }
-
+        System.out.println(TextoSeparado);
         if (TextoSeparado.equals("https://www.youtube.com/playlist?list=")) {
 
             List<Label> titles = new ArrayList<>();
@@ -88,7 +105,7 @@ public class Controller {
                     String link = Pesquisar.getText();//"http://youtube.com/watch?v=" + ID.get(i);
                     //Formato.getSelectionModel());
                     /* Calls Python */
-                    String cmd = "python C:\\Users\\thiagoalves\\DitiDownloader\\src\\main\\java\\YoutubeLink.py " + link;
+                    String cmd = "python "+Path_YoutubeLinks+" " + link;
                     System.out.println(cmd);
                     String line = "";
                     try {
@@ -119,6 +136,11 @@ public class Controller {
 
                                 thumbs.get(i).setOnMouseClicked(action(i));
                                 titles.get(i).setOnMouseClicked(action(i));
+
+                                titles2.add(new JFXSpinner());
+                                titles2.get(i).setVisible(false);
+                                Grid.add(titles2.get(i), 1, i);
+
                                 i++;
                             } catch (Exception e) {
                             }
@@ -145,7 +167,8 @@ public class Controller {
                 String link = "http://youtube.com/watch?v=" + IdVideo;
                 //Formato.getSelectionModel());
                 /* Calls Python */
-                String cmd = "python C:\\Users\\thiagoalves\\DitiDownloader\\src\\main\\java\\DitiPytube.py " + link + " \"" + dir + "\" True," + Formato.getSelectionModel().getSelectedItem();
+                titles2.get(i).setVisible(true);
+                String cmd = "python "+DitiPytube+" " + link + " \"" + dir + "\" True," + Formato.getSelectionModel().getSelectedItem();
                 System.out.println(cmd);
                 String line = "";
                 try {
@@ -167,6 +190,7 @@ public class Controller {
                 }
                 String path = dir + "\\" + line;
                 System.out.println(path);
+
                 Converte(path, i);
 
             }
@@ -182,6 +206,29 @@ public class Controller {
         Pesquisa = new Search(Texto);
         t1 = new Thread(Pesquisa);
         t1.start();
+
+        String url2 = "https://api.vagalume.com.br/search.excerpt?q="+Texto+"&limit=5";
+
+        try {
+            URL url = new URL(url2);
+            URLConnection request = url.openConnection();
+            request.connect();
+
+            // Convert to a JSON object to print data
+            JsonParser jp = new JsonParser(); //from gson
+            JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent())); //Convert the input stream to a json element
+            JsonObject docs = root.getAsJsonObject().get("response").getAsJsonObject().get("docs").getAsJsonArray().get(0).getAsJsonObject();
+            System.out.println(docs.get("title"));
+            System.out.println(docs.get("band"));
+
+
+
+        } catch (Exception e ){
+
+        }
+
+
+
 
         Thread t = new Thread(new Runnable() {
             public void run() {
@@ -209,10 +256,11 @@ public class Controller {
 
                         thumbs.get(i).setOnMouseClicked(action(i));
                         titles.get(i).setOnMouseClicked(action(i));
-                        titles2.add(new JFXSpinner());
 
                         Grid.add(thumbs.get(i), 0, i);
                         Grid.add(titles.get(i), 2, i);
+                        titles2.add(new JFXSpinner());
+                        titles2.get(i).setVisible(false);
                         Grid.add(titles2.get(i), 1, i);
 
                     }
@@ -259,7 +307,7 @@ public class Controller {
             public void handle(MouseEvent event) {
                 System.out.println(ID.get(i));
                 DownloadVideo(ID.get(i),i);
-            //https://www.youtube.com/playlist?list=PLQuDmj3ez49wUERdKxZYfoDVESQuvppH2
+                //https://www.youtube.com/playlist?list=PLQuDmj3ez49wUERdKxZYfoDVESQuvppH2
             }
         };
 
@@ -306,6 +354,8 @@ public class Controller {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        SetMetada(dir + ".mp3",i);
     }
 
     @FXML
@@ -349,13 +399,64 @@ public class Controller {
         return duration;
     }
 
+    @FXML
+    void DownloadAll() {
+        System.out.println("***");
+        int i = 0;
+        for (String id : ID){
+            System.out.println(id);
+            DownloadVideo(id,i);
+            i++;
+        }
+
+    }
+    void SetMetada(String dir,int i){
+        try {
+            File mp3File = new File(dir);
+            AudioFile audioFile = AudioFileIO.read(mp3File);
+            audioFile.setTag(new ID3v23Tag());
+            Tag newTag = audioFile.getTag();
+            String album = "teste";
+            newTag.setField(FieldKey.ALBUM, album);
+
+            String temp = System.getProperty("java.io.tmpdir");
+            BufferedImage bImage = SwingFXUtils.fromFXImage(thumbs.get(0).getImage(), null);
+            try {
+                ImageIO.write(bImage, "png",new File(temp+"\\image.png"));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            System.out.println(temp+"\\image.png");
+
+            Artwork artwork = Artwork.createArtworkFromFile(new File(temp+"\\image.png"));//createArtworkFromMetadataBlockDataPicture();//(fileCover);
+            newTag.addField(artwork);
+            newTag.setField(artwork);
+            audioFile.commit();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+
+    }
+    @FXML
+    void SetMetadas() {
+        FileChooser directoryChooser = new FileChooser();
+        directoryChooser.setTitle("Selecione onde quer salvar");
+        directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        dir = directoryChooser.showOpenDialog(null).toString();
+        path.setText(dir);
+        SetMetada(dir,-1);
+    }
 
     @FXML
     void initialize() {
         Formato.getItems().add("MP4");
         Formato.getItems().add("MP3");
 
-    }
+
+
+
+        }
     //url = https://www.googleapis.com/youtube/v3/playlists?part=id&channelId=UC8ughefz4kcazXZBKBEhZww&key=AIzaSyDGRbEc7qbGJ59Vsv68fL0aHml1FYpX_1g get playlist of user
 
     List<String> GetTitle(String VideoID) {
@@ -372,7 +473,7 @@ public class Controller {
             JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent())); //Convert the input stream to a json element
             JsonObject rootobj = root.getAsJsonObject();
             JsonArray string = rootobj.getAsJsonArray("items");//May be an array, may be an object.
-           // System.out.println(string);
+            // System.out.println(string);
             JsonElement element = string.get(0);
             JsonElement element2 = element.getAsJsonObject().get("snippet");
             String titulo = element2.getAsJsonObject().get("title").toString();
@@ -395,7 +496,3 @@ public class Controller {
         return info;
     }
 }
-
-
-
-
