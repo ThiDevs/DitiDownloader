@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact name="jaudiotagger-2_2_6-SNAPSHOT-sources">
+    <output-path>$PROJECT_DIR$/out/artifacts/jaudiotagger_2_2_6_SNAPSHOT_sources</output-path>
+    <root id="root">
+      <element id="library" level="project" name="jaudiotagger-2.2.6-SNAPSHOT-sources" />
+    </root>
+  </artifact>
+</component>

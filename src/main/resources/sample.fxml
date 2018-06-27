@@ -11,7 +11,7 @@
 <?import javafx.scene.paint.RadialGradient?>
 <?import javafx.scene.paint.Stop?>
 
-<AnchorPane fx:id="Principal" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="627.0" prefWidth="456.0" styleClass="AnchorPane" stylesheets="@application.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
+<AnchorPane fx:id="Principal" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="627.0" prefWidth="505.0" styleClass="AnchorPane" stylesheets="@application.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
    <children>
       <JFXTextField fx:id="Pesquisar" layoutX="6.0" layoutY="33.0" prefHeight="25.0" prefWidth="268.0" promptText="Pesquisar" style="-fx-text-fill: #d4d6cd;">
          <focusColor>
@@ -33,9 +33,9 @@
          </unFocusColor>
       </JFXTextField>
       <JFXButton layoutX="280.0" layoutY="33.0" onAction="#Ok" prefHeight="25.0" prefWidth="79.0" text="OK" />
-      <ScrollPane fx:id="ScrollPane" layoutX="7.0" layoutY="121.0" pannable="true" prefHeight="505.0" prefWidth="481.0" styleClass="ScrollPane">
+      <ScrollPane fx:id="ScrollPane" layoutX="7.0" layoutY="121.0" pannable="true" prefHeight="505.0" prefWidth="527.0" styleClass="ScrollPane">
         <content>
-          <AnchorPane fx:id="scroll" minHeight="0.0" minWidth="0.0" prefHeight="703.0" prefWidth="345.0" styleClass="AnchorPane">
+          <AnchorPane fx:id="scroll" minHeight="0.0" minWidth="0.0" prefHeight="703.0" prefWidth="489.0" styleClass="AnchorPane">
                <children>
                   <GridPane fx:id="listView" layoutX="-18.0" layoutY="-2.0" prefHeight="390.0" prefWidth="479.0" styleClass="list-view">
                     <columnConstraints>
@@ -88,7 +88,8 @@
             </RadialGradient>
          </unFocusColor></JFXTextField>
       <JFXButton layoutX="286.0" layoutY="87.0" onAction="#salvarem" text="Salvar em" />
-      <JFXButton layoutX="368.0" layoutY="33.0" onAction="#getmusic" text="Get Music" />
+      <JFXButton layoutX="378.0" layoutY="58.0" onAction="#getmusic" text="Get Music" />
       <JFXButton layoutX="369.0" layoutY="87.0" onAction="#DownloadAll" text="Download All" />
+      <JFXButton layoutX="378.0" layoutY="33.0" onAction="#SetMetadas" text="Colocar informações" />
    </children>
 </AnchorPane>
