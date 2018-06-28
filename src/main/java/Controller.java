@@ -45,8 +45,8 @@ public class Controller {
     // GLOBAIS //
 
     /* PUSH PATH OF SCRIPTS */
-    String Path_YoutubeLinks = "C:\\Users\\Administrador\\IdeaProjects\\DitiDownloader\\src\\main\\java\\YoutubeLink.py";
-    String DitiPytube = "C:\\Users\\Administrador\\IdeaProjects\\DitiDownloader\\src\\main\\java\\DitiPytube.py";
+    String Path_YoutubeLinks = "C:\\Users\\Thiago\\IdeaProjects\\DitiDownloader\\src\\main\\java\\YoutubeLink.py";
+    String DitiPytube = "C:\\Users\\Thiago\\IdeaProjects\\DitiDownloader\\src\\main\\java\\DitiPytube.py";
 
     Thread t1;
     Search Pesquisa;
@@ -167,7 +167,9 @@ public class Controller {
         }
 
     }
+    List<Thread> threads = new ArrayList<>();
     void DownloadVideo(String IdVideo,int i){
+
 
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -204,7 +206,8 @@ public class Controller {
 
             }
         });
-        thread.start();
+        threads.add(thread);
+        threads.get(i).start();
 
 
 
@@ -339,7 +342,7 @@ public class Controller {
         catch (Exception e){
             titles2.get(i).setVisible(false);
         }
-        System.out.println(Total);
+        //System.out.println(Total);
         try {
             String cmd = "ffmpeg  -i " + dir + " -progress - -y " + dir + ".mp3";
             ProcessBuilder builder = new ProcessBuilder("ffmpeg", "-i", dir, "-progress", "-", "-y", dir + ".mp3");
@@ -358,7 +361,7 @@ public class Controller {
                     if (i != -1) {
                         Platform.runLater(() -> titles2.get(i).setProgress(porctagem));
                     }
-                    System.out.println(porctagem);
+                   // System.out.println(porctagem);
 
                 } catch (Exception e) {
 
@@ -387,7 +390,7 @@ public class Controller {
     private Float GetDuration(String path) {
         /* Calls FFPROBE */
         String FFPROBE = "ffprobe -i \"" + path + "\" -v quiet -print_format json -show_format -show_streams -hide_banner";
-        System.out.println(FFPROBE);
+        //System.out.println(FFPROBE);
         String aux = "";
         try {
             Process p = Runtime.getRuntime().exec(FFPROBE);
@@ -415,13 +418,29 @@ public class Controller {
 
     @FXML
     void DownloadAll() {
-        System.out.println("***");
-        int i = 0;
-        for (String id : ID){
-            System.out.println(id);
-            DownloadVideo(id,i);
-            i++;
-        }
+       // System.out.println("***");
+
+        Thread t = new Thread(new Runnable() {
+            public void run() {
+                int i = 0;
+                for (String id : ID) {
+                    //System.out.println(id);
+                   // System.out.println(java.lang.Thread.activeCount());
+                    if (java.lang.Thread.activeCount() > 3) {
+                        for (int z = 0; z != java.lang.Thread.activeCount(); z++) {
+                            try {
+                                threads.get(z).join();
+                            } catch (Exception e) {
+                            }
+                            ;
+                        }
+
+                    }
+                    DownloadVideo(id, i);
+                    i++;
+                }
+            }});
+        t.start();
 
     }
     void SetMetada(String dir,int i){
@@ -440,7 +459,7 @@ public class Controller {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            System.out.println(temp+"\\image.png");
+           // System.out.println(temp+"\\image.png");
 
             Artwork artwork = Artwork.createArtworkFromFile(new File(temp+"\\image.png"));//createArtworkFromMetadataBlockDataPicture();//(fileCover);
             newTag.addField(artwork);
@@ -498,7 +517,7 @@ public class Controller {
             info.add(thumb);
 
             String id = element.getAsJsonObject().get("id").toString().replaceAll("\"","");
-            System.out.println(element.getAsJsonObject());
+            //System.out.println(element.getAsJsonObject());
             ID.add(id);
             //Principal.getChildren().add(listView);
         } catch (Exception e) {
