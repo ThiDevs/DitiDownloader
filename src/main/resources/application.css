@@ -22,3 +22,9 @@
     -fx-background-color:  #20211d;
     -fx-text-fill:  #d4d6cd;
 }
+.jfxcombo-box .cell{
+    -fx-text-fill: #ffffff;t-fill:  #ffffff;
+    }
+.jfxbutton{
+    -fx-text-fill: #ffffff
+}

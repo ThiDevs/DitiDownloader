@@ -6,6 +6,7 @@ import java.lang.reflect.Array;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
+import java.text.Normalizer;
 import java.util.*;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -84,103 +85,107 @@ public class Controller {
     private JFXComboBox<String> Formato;
 
     @FXML
+    JFXButton downloadall;
+    @FXML
+    JFXSpinner Carregando;
+
+    String TextoSeparado = "";
+    @FXML
     void Ok(ActionEvent event) throws InterruptedException {
         //
-        System.out.println("oi");
-        String TextoSeparado = "";
-        try {
-            TextoSeparado = Pesquisar.getText().substring(0, 38);
-        } catch (Exception e) {
-        }
-        System.out.println(TextoSeparado);
-        if (TextoSeparado.equals("https://www.youtube.com/playlist?list=")) {
+        Carregando.setVisible(true);
 
+            try {
+                TextoSeparado = Pesquisar.getText().substring(0, 38);
+            } catch (Exception e) {}
+        if (TextoSeparado.equals("https://www.youtube.com/playlist?list=")) {
+            downloadall.setVisible(true);
+            Platform.runLater(() -> Carregando.setVisible(true));
             List<Label> titles = new ArrayList<>();
 
+            Thread thread = new Thread(() -> {
+                ClearALL();
+                String link = Pesquisar.getText();
+                /* Calls Python */
 
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    ClearALL();
-                    String link = Pesquisar.getText();//"http://youtube.com/watch?v=" + ID.get(i);
-                    //Formato.getSelectionModel());
-                    /* Calls Python */
-                    String cmd = "python "+Path_YoutubeLinks+" " + link;
-                    System.out.println(cmd);
-                    String line = "";
-                    try {
-                        Process p = Runtime.getRuntime().exec(cmd);
-                        BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream(), "Windows-1252"));
-                        String aux;
-                        int i = 0;
-                        ID.clear();
-                        while (true) {
-                            aux = line;
-                            System.out.println(aux);
-                            line = r.readLine();
-                            if (line == null) {
-                                line = aux;
-                                break;
-                            }
-
-                            if(!aux.equals(line)) {
-                                try {
-                                    List<String> INFOS = GetTitle(line.substring(31));
-                                    String titulo = INFOS.get(0);
-                                    String thumb = INFOS.get(1);
-
-                                    thumbs.add(new ImageView(new Image(thumb)));
-                                    thumbs.get(i).setFitHeight(100);
-                                    thumbs.get(i).setFitWidth(100);
-                                    Grid.add(thumbs.get(i), 0, i);
-
-                                    titles.add(new Label(titulo.replaceAll("\"", "")));
-                                    titles.get(i).setStyle("-fx-text-fill:  #d4d6cd;");
-                                    Grid.add(titles.get(i), 2, i);
-
-                                    thumbs.get(i).setOnMouseClicked(action(i));
-                                    titles.get(i).setOnMouseClicked(action(i));
-
-                                    titles2.add(new JFXSpinner());
-                                    titles2.get(i).setVisible(false);
-                                    Grid.add(titles2.get(i), 1, i);
-
-
-                                } catch (Exception e) {
-                                }
-                            }
-
-                            //
-
-                            i++;
+                String cmd = "python "+Path_YoutubeLinks+" " + link;
+                System.out.println(cmd);
+                String line = "";
+                try {
+                    Process p = Runtime.getRuntime().exec(cmd);
+                    BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream(), "Windows-1252"));
+                    String aux;
+                    int i = 0;
+                    ID.clear();
+                    while (true) {
+                        aux = line;
+                        line = r.readLine();
+                        if (line == null) {
+                            line = aux;
+                            break;
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    Platform.runLater(() -> scroll.getChildren().add(Grid));
 
+                        if(!aux.equals(line)) {
+                            try {
+                                List<String> INFOS = GetTitle(line.substring(31));
+                                String titulo = INFOS.get(0);
+                                String thumb = INFOS.get(1);
+
+                                thumbs.add(new ImageView(new Image(thumb)));
+                                thumbs.get(i).setFitHeight(100);
+                                thumbs.get(i).setFitWidth(100);
+                                Grid.add(thumbs.get(i), 0, i);
+
+                                titles.add(new Label(titulo.replaceAll("\"", "")));
+                                titles.get(i).setStyle("-fx-text-fill:  #d4d6cd;");
+                                Grid.add(titles.get(i), 2, i);
+
+                                thumbs.get(i).setOnMouseClicked(action(i));
+                                titles.get(i).setOnMouseClicked(action(i));
+
+                                titles2.add(new JFXSpinner());
+                                titles2.get(i).setVisible(false);
+                                Grid.add(titles2.get(i), 1, i);
+
+
+                            } catch (Exception e) {
+                            }
+                        }
+
+                        //
+
+                        i++;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+                Platform.runLater(() -> scroll.getChildren().add(Grid));
+                Platform.runLater(() -> Carregando.setVisible(false));
+
             });
             thread.start();
         } else {
             search(Pesquisar.getText());
+            Platform.runLater(() -> Carregando.setVisible(false));
         }
 
     }
     List<Thread> threads = new ArrayList<>();
+    Thread thread;
+    String line = "";
     void DownloadVideo(String IdVideo,int i){
 
 
-        Thread thread = new Thread(new Runnable() {
+        thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 String link = "http://youtube.com/watch?v=" + IdVideo;
-                //Formato.getSelectionModel());
                 /* Calls Python */
                 titles2.get(i).setVisible(true);
+                dir = path.getText();
                 String cmd = "python "+DitiPytube+" " + link + " \"" + dir + "\" True," + Formato.getSelectionModel().getSelectedItem();
-                System.out.println(cmd);
-                String line = "";
+
+
                 try {
                     Process p = Runtime.getRuntime().exec(cmd);
                     BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream(), "Windows-1252"));
@@ -193,21 +198,33 @@ public class Controller {
                             line = aux;
                             break;
                         }
-                        System.out.println(line);
 
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                String path = dir + "\\" + line;
-                System.out.println(path);
 
-                Converte(path, i);
+
+
 
             }
         });
-        threads.add(thread);
-        threads.get(i).start();
+        thread.start();
+        Thread Converte_Thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    thread.join();
+                } catch (Exception e){
+
+                }
+                String path = dir + "\\" + line;
+                Converte(path, i);
+
+            }});
+        Converte_Thread.start();
+
+
 
 
 
@@ -218,7 +235,7 @@ public class Controller {
         Pesquisa = new Search(Texto);
         t1 = new Thread(Pesquisa);
         t1.start();
-
+/*
         String url2 = "https://api.vagalume.com.br/search.excerpt?q="+Texto+"&limit=5";
 
         try {
@@ -239,7 +256,7 @@ public class Controller {
 
         }
 
-
+*/
 
 
         Thread t = new Thread(new Runnable() {
@@ -268,7 +285,7 @@ public class Controller {
 
                         thumbs.get(i).setOnMouseClicked(action(i));
                         titles.get(i).setOnMouseClicked(action(i));
-
+                        titles.get(i).setStyle("-fx-text-fill: white");
                         Grid.add(thumbs.get(i), 0, i);
                         Grid.add(titles.get(i), 2, i);
                         titles2.add(new JFXSpinner());
@@ -281,7 +298,6 @@ public class Controller {
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                    System.out.println(e);
                 }
             }
         });
@@ -317,9 +333,7 @@ public class Controller {
 
             @Override
             public void handle(MouseEvent event) {
-
-                System.out.println(i+" "+ID.get(i));
-                DownloadVideo(ID.get(i),i);
+            DownloadVideo(ID.get(i),i);
                 //https://www.youtube.com/playlist?list=PLQuDmj3ez49wUERdKxZYfoDVESQuvppH2
             }
         };
@@ -342,7 +356,6 @@ public class Controller {
         catch (Exception e){
             titles2.get(i).setVisible(false);
         }
-        //System.out.println(Total);
         try {
             String cmd = "ffmpeg  -i " + dir + " -progress - -y " + dir + ".mp3";
             ProcessBuilder builder = new ProcessBuilder("ffmpeg", "-i", dir, "-progress", "-", "-y", dir + ".mp3");
@@ -361,7 +374,6 @@ public class Controller {
                     if (i != -1) {
                         Platform.runLater(() -> titles2.get(i).setProgress(porctagem));
                     }
-                   // System.out.println(porctagem);
 
                 } catch (Exception e) {
 
@@ -390,7 +402,6 @@ public class Controller {
     private Float GetDuration(String path) {
         /* Calls FFPROBE */
         String FFPROBE = "ffprobe -i \"" + path + "\" -v quiet -print_format json -show_format -show_streams -hide_banner";
-        //System.out.println(FFPROBE);
         String aux = "";
         try {
             Process p = Runtime.getRuntime().exec(FFPROBE);
@@ -402,7 +413,6 @@ public class Controller {
                 if (line2 == null) {
                     break;
                 }
-                //System.out.println(line2);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -418,28 +428,21 @@ public class Controller {
 
     @FXML
     void DownloadAll() {
-       // System.out.println("***");
-
-        Thread t = new Thread(new Runnable() {
-            public void run() {
-                int i = 0;
-                for (String id : ID) {
-                    //System.out.println(id);
-                   // System.out.println(java.lang.Thread.activeCount());
-                    if (java.lang.Thread.activeCount() > 3) {
-                        for (int z = 0; z != java.lang.Thread.activeCount(); z++) {
-                            try {
-                                threads.get(z).join();
-                            } catch (Exception e) {
-                            }
-                            ;
-                        }
-
+        Thread t = null;
+        t = new Thread(() -> {
+            int i = 0;
+            for (String id : ID) {
+                if (Thread.activeCount() > 3) {
+                    try {
+                        thread.join();
+                    } catch (Exception e) {
                     }
-                    DownloadVideo(id, i);
-                    i++;
+
                 }
-            }});
+                DownloadVideo(id, i);
+                i++;
+            }
+        });
         t.start();
 
     }
@@ -459,7 +462,6 @@ public class Controller {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-           // System.out.println(temp+"\\image.png");
 
             Artwork artwork = Artwork.createArtworkFromFile(new File(temp+"\\image.png"));//createArtworkFromMetadataBlockDataPicture();//(fileCover);
             newTag.addField(artwork);
@@ -486,9 +488,12 @@ public class Controller {
     void initialize() {
         Formato.getItems().add("MP4");
         Formato.getItems().add("MP3");
+        Formato.getSelectionModel().select(Formato.getItems().get(1));
+
+        path.setText(System.getProperty("user.home") + "\\Desktop");
+
 
         }
-    //url = https://www.googleapis.com/youtube/v3/playlists?part=id&channelId=UC8ughefz4kcazXZBKBEhZww&key=AIzaSyDGRbEc7qbGJ59Vsv68fL0aHml1FYpX_1g get playlist of user
 
     List<String> GetTitle(String VideoID) {
 
@@ -499,27 +504,24 @@ public class Controller {
             URLConnection request = url.openConnection();
             request.connect();
 
-            // Convert to a JSON object to print data
-            JsonParser jp = new JsonParser(); //from gson
-            JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent())); //Convert the input stream to a json element
+            JsonParser jp = new JsonParser();
+            JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent()));
             JsonObject rootobj = root.getAsJsonObject();
-            JsonArray string = rootobj.getAsJsonArray("items");//May be an array, may be an object.
-            // System.out.println(string);
+            JsonArray string = rootobj.getAsJsonArray("items");
             JsonElement element = string.get(0);
             JsonElement element2 = element.getAsJsonObject().get("snippet");
             String titulo = element2.getAsJsonObject().get("title").toString();
-//            System.out.println(titulo);
             info.add(titulo);
 
 
             String thumb = element2.getAsJsonObject().get("thumbnails").getAsJsonObject().get("default").getAsJsonObject().get("url").toString().replaceAll("\"","");
-            //System.out.println(thumb);
+
             info.add(thumb);
 
             String id = element.getAsJsonObject().get("id").toString().replaceAll("\"","");
-            //System.out.println(element.getAsJsonObject());
+
             ID.add(id);
-            //Principal.getChildren().add(listView);
+
         } catch (Exception e) {
             e.printStackTrace();
         }

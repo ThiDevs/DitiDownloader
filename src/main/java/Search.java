@@ -63,13 +63,8 @@ public class Search implements Runnable {
         try{id.clear();}catch (Exception e){}
         try{titles.clear();}catch (Exception e){}
         try{thumb.clear();}catch (Exception e){}
-        System.out.println("\n=============================================================");
-        System.out.println(
-                "   First " + NUMBER_OF_VIDEOS_RETURNED + " videos for search on \"" + query + "\".");
-        System.out.println("=============================================================\n");
 
         if (!iteratorSearchResults.hasNext()) {
-            System.out.println(" There aren't any results for your query.");
         }
         id = new ArrayList<String>();
         titles = new ArrayList<String>();
@@ -77,7 +72,6 @@ public class Search implements Runnable {
         while (iteratorSearchResults.hasNext()) {
 
             SearchResult singleVideo = iteratorSearchResults.next();
-            System.out.println(singleVideo);
             ResourceId rId = singleVideo.getId();
 
 
