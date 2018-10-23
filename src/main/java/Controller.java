@@ -46,6 +46,7 @@ public class Controller {
     // GLOBAIS //
 
     /* PUSH PATH OF SCRIPTS */
+
     String Path_YoutubeLinks = "C:\\Users\\Thiago\\IdeaProjects\\DitiDownloader\\src\\main\\java\\YoutubeLink.py";
     String DitiPytube = "C:\\Users\\Thiago\\IdeaProjects\\DitiDownloader\\src\\main\\java\\DitiPytube.py";
 
@@ -149,6 +150,7 @@ public class Controller {
 
 
                             } catch (Exception e) {
+                                e.printStackTrace();
                             }
                         }
 
@@ -167,6 +169,7 @@ public class Controller {
         } else {
             search(Pesquisar.getText());
             Platform.runLater(() -> Carregando.setVisible(false));
+
         }
 
     }
@@ -184,7 +187,7 @@ public class Controller {
                 titles2.get(i).setVisible(true);
                 dir = path.getText();
                 String cmd = "python "+DitiPytube+" " + link + " \"" + dir + "\" True," + Formato.getSelectionModel().getSelectedItem();
-
+                System.out.println(cmd);
 
                 try {
                     Process p = Runtime.getRuntime().exec(cmd);
@@ -204,13 +207,21 @@ public class Controller {
                     e.printStackTrace();
                 }
 
+                try {
+                    double porctagem = 100.00;
+                    if (i != -1) {
+                        Platform.runLater(() -> titles2.get(i).setProgress(porctagem));
+                    }
 
+                } catch (Exception e) {
+
+                }
 
 
             }
         });
         thread.start();
-        Thread Converte_Thread = new Thread(new Runnable() {
+        /*Thread _ConverteThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try{
@@ -225,7 +236,8 @@ public class Controller {
         Converte_Thread.start();
 
 
-
+*/
+        //Thread para converter
 
 
     }
