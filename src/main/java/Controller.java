@@ -537,7 +537,7 @@ public class Controller {
 
         table.setItems(data);
         table.getColumns().addAll( btnCol,  emailCol,firstNameCol);
-
+//teste
         vbox.setSpacing(5);
         VBox.setVgrow(table, Priority.ALWAYS);
 
