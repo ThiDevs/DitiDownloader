@@ -9,17 +9,31 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.jfoenix.controls.*;
 import javafx.application.Platform;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import javafx.util.Callback;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.tag.FieldKey;
@@ -257,6 +271,7 @@ public class Controller {
                     thumbs.add(new ImageView(new Image(url)));
                 }
 
+
                 for (int i = 0; i != thumbs.size(); i++) {
 
                     thumbs.get(i).setFitHeight(100);
@@ -270,6 +285,8 @@ public class Controller {
                     titles2.add(new JFXSpinner());
                     titles2.get(i).setVisible(false);
                     Grid.add(titles2.get(i), 1, i);
+
+                    data.add(new Person(Pesquisa.getThumb().get(i), new JFXSpinner(),Pesquisa.getLista().get(i)));
 
                 }
                 Platform.runLater(() -> scroll.getChildren().add(Grid));
@@ -448,7 +465,12 @@ public class Controller {
         path.setText(dir);
         SetMetada(dir);
     }
-
+    @FXML
+    private TableView<Person> table;
+    private final ObservableList<Person> data =
+            FXCollections.observableArrayList();
+    @FXML
+    private VBox vbox;
     @FXML
     void initialize() {
         Formato.getItems().add("MP4");
@@ -456,6 +478,69 @@ public class Controller {
         Formato.getSelectionModel().select(Formato.getItems().get(1));
 
         path.setText(System.getProperty("user.home") + "\\Desktop");
+
+        Grid.setVisible(false);
+
+
+        table.setEditable(true);
+
+        TableColumn<Person, String> firstNameCol = new TableColumn<>("Title");
+        firstNameCol.setMinWidth(100);
+        firstNameCol.setCellValueFactory(
+                new PropertyValueFactory<>("firstName"));
+
+        TableColumn<Person, String> emailCol = new TableColumn<>("Email");
+        emailCol.setMinWidth(30);
+        emailCol.setCellValueFactory(
+                new PropertyValueFactory<>("email"));
+
+        TableColumn<Person, Person> btnCol = new TableColumn<>("Gifts");
+        btnCol.setMinWidth(350);
+        btnCol.setCellValueFactory(features -> new ReadOnlyObjectWrapper<>(features.getValue()));
+        btnCol.setComparator(Comparator.comparing(Person::getLikes));
+        btnCol.setCellFactory(new Callback<TableColumn<Person, Person>, TableCell<Person, Person>>() {
+            @Override public TableCell<Person, Person> call(TableColumn<Person, Person> btnCol) {
+                return new TableCell<Person, Person>() {
+                    final ImageView buttonGraphic = new ImageView();
+                    final JFXButton button = new JFXButton(); {
+                        button.setGraphic(buttonGraphic);
+                        button.setMinWidth(130);
+                    }
+                    @Override public void updateItem(final Person person, boolean empty) {
+                        super.updateItem(person, empty);
+                        if (person != null) {
+
+                            buttonGraphic.setImage(new Image(person.getLikes()));
+
+                            setGraphic(button);
+                            button.setOnAction(event -> {
+
+                                Search Pesquisa = new Search("Rap lord");
+                                Thread t1 = new Thread(Pesquisa);
+                                t1.start();
+                                try {
+                                    t1.join();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                for (int i= 0 ; i != Pesquisa.getLista().size(); i++ ){
+                                    data.add(new Person(Pesquisa.getThumb().get(i), new JFXSpinner(),Pesquisa.getLista().get(i)));
+                                }
+                            });
+                        } else {
+                            setGraphic(null);
+                        }
+                    }
+                };
+            }
+        });
+
+        table.setItems(data);
+        table.getColumns().addAll( btnCol,  emailCol,firstNameCol);
+
+        vbox.setSpacing(5);
+        VBox.setVgrow(table, Priority.ALWAYS);
+
 
 
         }
@@ -492,5 +577,43 @@ public class Controller {
         }
 
         return info;
+    }
+    public static class Person {
+
+        private final SimpleStringProperty firstName;
+        private JFXSpinner email;
+        private final SimpleStringProperty likes;
+
+        private Person(String likes,JFXSpinner email,String fName ) {
+            this.likes = new SimpleStringProperty(likes);
+            this.email = email;
+            this.firstName = new SimpleStringProperty(fName);
+
+
+        }
+
+        public String getFirstName() {
+            return firstName.get();
+        }
+
+        public void setFirstName(String fName) {
+            firstName.set(fName);
+        }
+
+        public JFXSpinner getEmail() {
+            return email;
+        }
+
+        public void setEmail(JFXSpinner fName) {
+            email = fName;
+        }
+
+        public String getLikes() {
+            return likes.get();
+        }
+
+        public void setLikes(String likes) {
+            this.likes.set(likes);
+        }
     }
 }

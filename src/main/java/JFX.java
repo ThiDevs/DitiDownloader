@@ -42,17 +42,17 @@ public class JFX extends Application {
 
         table.setEditable(true);
 
-        TableColumn firstNameCol = new TableColumn("Title");
+        TableColumn<Person, String> firstNameCol = new TableColumn<>("Title");
         firstNameCol.setMinWidth(100);
         firstNameCol.setCellValueFactory(
                 new PropertyValueFactory<Person, String>("firstName"));
 
-        TableColumn lastNameCol = new TableColumn("Last Name");
+        TableColumn<Person, String> lastNameCol = new TableColumn<>("Last Name");
         lastNameCol.setMinWidth(100);
         lastNameCol.setCellValueFactory(
                 new PropertyValueFactory<Person, String>("lastName"));
 
-        TableColumn emailCol = new TableColumn("Email");
+        TableColumn<Person, String> emailCol = new TableColumn<Person, String>("Email");
         emailCol.setMinWidth(200);
         emailCol.setCellValueFactory(
                 new PropertyValueFactory<Person, String>("email"));
@@ -61,7 +61,7 @@ public class JFX extends Application {
         btnCol.setMinWidth(150);
         btnCol.setCellValueFactory(new Callback<CellDataFeatures<Person, Person>, ObservableValue<Person>>() {
             @Override public ObservableValue<Person> call(CellDataFeatures<Person, Person> features) {
-                return new ReadOnlyObjectWrapper(features.getValue());
+                return new ReadOnlyObjectWrapper<>(features.getValue());
             }
         });
         btnCol.setComparator(new Comparator<Person>() {

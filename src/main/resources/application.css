@@ -28,3 +28,7 @@
 .jfxbutton{
     -fx-text-fill: #ffffff
 }
+.TableView {
+-fx-background-color:  #20211d;
+
+}
