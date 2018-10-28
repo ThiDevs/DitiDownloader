@@ -165,13 +165,13 @@ public class Controller {
 
     private Thread thread;
     private String line = "";
-    private void DownloadVideo(String IdVideo, int i){
+    private void DownloadVideo(String IdVideo, Person person){
 
 
         thread = new Thread(() -> {
             String link = "http://youtube.com/watch?v=" + IdVideo;
             /* Calls Python */
-            titles2.get(i).setVisible(true);
+            person.getEmail().setVisible(true);
             dir = path.getText();
             String cmd = "python "+DitiPytube+" " + link + " \"" + dir + "\" True," + Formato.getSelectionModel().getSelectedItem();
             System.out.println(cmd);
@@ -196,7 +196,8 @@ public class Controller {
 
             try {
                 double porctagem = 100.00;
-                Platform.runLater(() -> titles2.get(i).setProgress(porctagem));
+                Platform.runLater(() -> person.getEmail().setProgress(porctagem));
+
 
             } catch (Exception ignored) {
 
@@ -205,7 +206,7 @@ public class Controller {
 
         });
         thread.start();
-        /*Thread _ConverteThread = new Thread(new Runnable() {
+        Thread ConverteThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try{
@@ -214,13 +215,13 @@ public class Controller {
 
                 }
                 String path = dir + "\\" + line;
-                Converte(path, i);
+                Converte(path, person);
 
             }});
-        Converte_Thread.start();
+        ConverteThread.start();
 
 
-*/
+
         //Thread para converter
 
 
@@ -286,7 +287,11 @@ public class Controller {
                     titles2.get(i).setVisible(false);
                     Grid.add(titles2.get(i), 1, i);
 
-                    data.add(new Person(Pesquisa.getThumb().get(i), new JFXSpinner(),Pesquisa.getLista().get(i)));
+                    JFXSpinner spinner = new JFXSpinner();
+                    spinner.setVisible(false);
+
+                    data.add(new Person(Pesquisa.getThumb().get(i), spinner,Pesquisa.getLista().get(i),Pesquisa.getID().get(i)));
+
 
                 }
                 Platform.runLater(() -> scroll.getChildren().add(Grid));
@@ -325,7 +330,7 @@ public class Controller {
     private EventHandler<? super MouseEvent> action(int i) {
 
         return (EventHandler<MouseEvent>) event -> {
-        DownloadVideo(ID.get(i),i);
+        //DownloadVideo(ID.get(i),i);
             //https://www.youtube.com/playlist?list=PLQuDmj3ez49wUERdKxZYfoDVESQuvppH2
         };
     }
@@ -339,11 +344,11 @@ public class Controller {
         path.setText(dir);
     }
 
-    private void Converte(String dir) {
+    private void Converte(String dir, Person person) {
         Float Total = null;
         try{        Total = GetDuration(dir);}
         catch (Exception e){
-            titles2.get(-1).setVisible(false);
+            person.getEmail().setVisible(false);
         }
         try {
             ProcessBuilder builder = new ProcessBuilder("ffmpeg", "-i", dir, "-progress", "-", "-y", dir + ".mp3");
@@ -359,7 +364,7 @@ public class Controller {
                 try {
                     Float calc = GetDuration(dir + ".mp3");
                     float porctagem = (calc) / Total;
-                    Platform.runLater(() -> titles2.get(-1).setProgress(porctagem));
+                    Platform.runLater(() ->  person.getEmail().setProgress(porctagem));
 
                 } catch (Exception ignored) {
 
@@ -370,7 +375,7 @@ public class Controller {
             e.printStackTrace();
         }
 
-        SetMetada(dir + ".mp3");
+        SetMetada(dir + ".mp3",person);
     }
 
     @FXML
@@ -381,7 +386,8 @@ public class Controller {
         dir = directoryChooser.showOpenDialog(null).toString();
         path.setText(dir);
 
-        Converte(dir);
+        Object person = null;
+        Converte(dir, (Person) person);
 
     }
 
@@ -421,14 +427,14 @@ public class Controller {
                     }
 
                 }
-                DownloadVideo(id, i);
+                //DownloadVideo(id, i);
                 i++;
             }
         });
         t.start();
 
     }
-    private void SetMetada(String dir){
+    private void SetMetada(String dir, Person person){
         try {
             File mp3File = new File(dir);
             AudioFile audioFile = AudioFileIO.read(mp3File);
@@ -438,7 +444,7 @@ public class Controller {
             newTag.setField(FieldKey.ALBUM, album);
 
             String temp = System.getProperty("java.io.tmpdir");
-            BufferedImage bImage = SwingFXUtils.fromFXImage(thumbs.get(-1).getImage(), null);
+            BufferedImage bImage = SwingFXUtils.fromFXImage(new Image(person.getLikes()), null);
             try {
                 ImageIO.write(bImage, "png",new File(temp+"\\image.png"));
             } catch (IOException e) {
@@ -450,7 +456,7 @@ public class Controller {
             newTag.setField(artwork);
             audioFile.commit();
         } catch (Exception e){
-            titles2.get(-1).setVisible(false);
+            person.getEmail().setVisible(false);
             e.printStackTrace();
         }
 
@@ -463,7 +469,7 @@ public class Controller {
         directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
         dir = directoryChooser.showOpenDialog(null).toString();
         path.setText(dir);
-        SetMetada(dir);
+        //SetMetada(dir);
     }
     @FXML
     private TableView<Person> table;
@@ -484,17 +490,17 @@ public class Controller {
 
         table.setEditable(true);
 
-        TableColumn<Person, String> firstNameCol = new TableColumn<>("Title");
+        TableColumn<Person, String> firstNameCol = new TableColumn<>("Titulo");
         firstNameCol.setMinWidth(100);
         firstNameCol.setCellValueFactory(
                 new PropertyValueFactory<>("firstName"));
 
-        TableColumn<Person, String> emailCol = new TableColumn<>("Email");
+        TableColumn<Person, String> emailCol = new TableColumn<>("Progress");
         emailCol.setMinWidth(30);
         emailCol.setCellValueFactory(
                 new PropertyValueFactory<>("email"));
 
-        TableColumn<Person, Person> btnCol = new TableColumn<>("Gifts");
+        TableColumn<Person, Person> btnCol = new TableColumn<>("Imagem");
         btnCol.setMinWidth(350);
         btnCol.setCellValueFactory(features -> new ReadOnlyObjectWrapper<>(features.getValue()));
         btnCol.setComparator(Comparator.comparing(Person::getLikes));
@@ -513,20 +519,13 @@ public class Controller {
                             buttonGraphic.setImage(new Image(person.getLikes()));
 
                             setGraphic(button);
-                            button.setOnAction(event -> {
+                            button.setOnAction(event ->
+                            {
+                                DownloadVideo(person.getId(), person);
 
-                                Search Pesquisa = new Search("Rap lord");
-                                Thread t1 = new Thread(Pesquisa);
-                                t1.start();
-                                try {
-                                    t1.join();
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                                for (int i= 0 ; i != Pesquisa.getLista().size(); i++ ){
-                                    data.add(new Person(Pesquisa.getThumb().get(i), new JFXSpinner(),Pesquisa.getLista().get(i)));
-                                }
                             });
+
+                                    //System.out.println(person.getFirstName()));
                         } else {
                             setGraphic(null);
                         }
@@ -537,7 +536,6 @@ public class Controller {
 
         table.setItems(data);
         table.getColumns().addAll( btnCol,  emailCol,firstNameCol);
-//teste
         vbox.setSpacing(5);
         VBox.setVgrow(table, Priority.ALWAYS);
 
@@ -583,9 +581,11 @@ public class Controller {
         private final SimpleStringProperty firstName;
         private JFXSpinner email;
         private final SimpleStringProperty likes;
+        private final SimpleStringProperty id;
 
-        private Person(String likes,JFXSpinner email,String fName ) {
+        private Person(String likes,JFXSpinner email,String fName, String id ) {
             this.likes = new SimpleStringProperty(likes);
+            this.id = new SimpleStringProperty(id);
             this.email = email;
             this.firstName = new SimpleStringProperty(fName);
 
@@ -610,6 +610,10 @@ public class Controller {
 
         public String getLikes() {
             return likes.get();
+        }
+
+        public String getId() {
+            return id.get();
         }
 
         public void setLikes(String likes) {

@@ -13,6 +13,7 @@ print(yt.title)
 
 videos = yt.streams.filter(progressive=True, file_extension='mp4').order_by('resolution').desc().first()
 print(videos)
+print(videos.filesize)
 print(videos.default_filename)
 videos.download(dir)
 

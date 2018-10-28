@@ -42,7 +42,7 @@ public class Search implements Runnable {
      */
     private static final String PROPERTIES_FILENAME = "youtube.properties";
 
-    private static final long NUMBER_OF_VIDEOS_RETURNED = 7;
+    private static final long NUMBER_OF_VIDEOS_RETURNED = 50;
     //private static final Object List = ;
 
     /**

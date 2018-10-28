@@ -14,11 +14,11 @@
 <?import javafx.scene.paint.RadialGradient?>
 <?import javafx.scene.paint.Stop?>
 
-<AnchorPane fx:id="Principal" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="627.0" prefWidth="505.0" styleClass="AnchorPane" stylesheets="@application.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
+<AnchorPane fx:id="Principal" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="627.0" prefWidth="731.0" styleClass="AnchorPane" stylesheets="@application.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
    <children>
-      <VBox fx:id="vbox" layoutY="122.0" prefHeight="505.0" prefWidth="505.0" styleClass="AnchorPane" stylesheets="@application.css">
+      <VBox fx:id="vbox" layoutY="122.0" prefHeight="505.0" prefWidth="731.0" styleClass="AnchorPane" stylesheets="@application.css">
          <children>
-            <TableView fx:id="table" prefHeight="505.0" prefWidth="481.0" styleClass="TableView" />
+            <TableView fx:id="table" prefHeight="505.0" prefWidth="664.0" styleClass="TableView" />
          </children>
       </VBox>
       <JFXTextField fx:id="Pesquisar" layoutX="6.0" layoutY="33.0" prefHeight="25.0" prefWidth="268.0" promptText="Pesquisar" style="-fx-text-fill: #d4d6cd;">
